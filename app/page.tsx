@@ -11,7 +11,9 @@ import {
 } from "./lib/dados";
 
 export default function Home() {
-  const [categoriaAtiva, setCategoriaAtiva] = useState<(typeof categorias)[number]["id"]>(categorias[1].id); // Começa com Alcool (como Cerveja na imagem)
+  const [categoriaAtiva, setCategoriaAtiva] = useState<
+    (typeof categorias)[number]["id"]
+  >(categorias[1].id); // Começa com Alcool (como Cerveja na imagem)
 
   const produtosAtuais = getProdutosPorCategoria(categoriaAtiva);
   const subcategoriasAtuais = getSubcategorias(categoriaAtiva);
@@ -21,21 +23,6 @@ export default function Home() {
       {/* Header Fixo */}
       <header className="sticky top-0 z-10 flex flex-col bg-background px-6 pt-6 pb-4">
         <div className="flex items-center justify-between mb-6">
-          <button className="p-2 -ml-2 rounded-full hover:bg-white/10 transition">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
-          </button>
-
           <span className="text-sm font-medium opacity-90">
             Encontramos{" "}
             <span className="font-bold text-white">{produtos.length}</span>{" "}
