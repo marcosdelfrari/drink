@@ -3,10 +3,15 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { categorias, getProdutosPorCategoria, getSubcategorias, produtos } from "./lib/dados";
+import {
+  categorias,
+  getProdutosPorCategoria,
+  getSubcategorias,
+  produtos,
+} from "./lib/dados";
 
 export default function Home() {
-  const [categoriaAtiva, setCategoriaAtiva] = useState(categorias[1].id); // Começa com Alcool (como Cerveja na imagem)
+  const [categoriaAtiva, setCategoriaAtiva] = useState<(typeof categorias)[number]["id"]>(categorias[1].id); // Começa com Alcool (como Cerveja na imagem)
 
   const produtosAtuais = getProdutosPorCategoria(categoriaAtiva);
   const subcategoriasAtuais = getSubcategorias(categoriaAtiva);
@@ -17,17 +22,37 @@ export default function Home() {
       <header className="sticky top-0 z-10 flex flex-col bg-background px-6 pt-6 pb-4">
         <div className="flex items-center justify-between mb-6">
           <button className="p-2 -ml-2 rounded-full hover:bg-white/10 transition">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
           </button>
-          
+
           <span className="text-sm font-medium opacity-90">
-            Encontramos <span className="font-bold text-white">{produtos.length}</span> bebidas
+            Encontramos{" "}
+            <span className="font-bold text-white">{produtos.length}</span>{" "}
+            bebidas
           </span>
-          
+
           <button className="p-2 -mr-2 rounded-full hover:bg-white/10 transition">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <line x1="4" y1="21" x2="4" y2="14"></line>
               <line x1="4" y1="10" x2="4" y2="3"></line>
               <line x1="12" y1="21" x2="12" y2="12"></line>
@@ -50,10 +75,14 @@ export default function Home() {
                 key={cat.id}
                 onClick={() => setCategoriaAtiva(cat.id)}
                 className={`flex flex-col items-center gap-1 transition-all ${
-                  isActive ? "text-white font-semibold" : "text-gray-400 font-medium"
+                  isActive
+                    ? "text-white font-semibold"
+                    : "text-gray-400 font-medium"
                 }`}
               >
-                <span className="whitespace-nowrap text-base">{cat.label.split(" ")[0]}</span>
+                <span className="whitespace-nowrap text-base">
+                  {cat.label.split(" ")[0]}
+                </span>
                 {isActive && (
                   <div className="h-1 w-1 rounded-full bg-white mt-1"></div>
                 )}
@@ -73,20 +102,30 @@ export default function Home() {
                 {produtosAtuais
                   .filter((p) => p.subcategoria === sub)
                   .map((produto) => (
-                    <div key={produto.id} className="flex items-center justify-between group">
-                      <Link href={`/produto/${produto.id}`} className="flex items-center gap-4 flex-1">
-                        <div className="relative h-16 w-10 flex-shrink-0">
+                    <div
+                      key={produto.id}
+                      className="flex items-center justify-between group"
+                    >
+                      <Link
+                        href={`/produto/${produto.id}`}
+                        className="flex items-center gap-4 flex-1"
+                      >
+                        <div className="relative h-16 w-10 shrink-0">
                           {/* Placeholder image logic since local images might not exist yet */}
-                          <div className="absolute inset-0 bg-gray-100 rounded-md flex items-center justify-center text-xs text-gray-400">
-                             <img 
-                               src={produto.imagem} 
-                               alt={produto.nome}
-                               className="object-contain h-full w-full"
-                               onError={(e) => {
-                                 e.currentTarget.style.display = 'none';
-                                 e.currentTarget.parentElement!.classList.add('bg-gray-200');
-                               }} 
-                             />
+                          <div className="absolute inset-0 bg-white rounded-md flex items-center justify-center text-xs text-gray-400">
+                            <Image
+                              src={produto.imagem}
+                              alt={produto.nome}
+                              fill
+                              sizes="100px"
+                              className="object-contain"
+                              onError={(e) => {
+                                e.currentTarget.style.display = "none";
+                                e.currentTarget.parentElement!.parentElement!.classList.add(
+                                  "bg-gray-200",
+                                );
+                              }}
+                            />
                           </div>
                         </div>
                         <div className="flex flex-col">
@@ -94,13 +133,22 @@ export default function Home() {
                             {produto.nome}
                           </h3>
                           <span className="text-gray-500 font-medium text-sm mt-0.5">
-                            R${produto.preco.toFixed(2).replace('.', ',')}
+                            R${produto.preco.toFixed(2).replace(".", ",")}
                           </span>
                         </div>
                       </Link>
-                      
+
                       <button className="h-10 w-10 rounded-full border border-orange-300 text-orange-400 flex items-center justify-center hover:bg-orange-50 transition active:scale-95">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
                           <line x1="12" y1="5" x2="12" y2="19"></line>
                           <line x1="5" y1="12" x2="19" y2="12"></line>
                         </svg>

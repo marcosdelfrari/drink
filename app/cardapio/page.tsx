@@ -22,7 +22,7 @@ export default function CardapioPage() {
         (p) =>
           p.nome.toLowerCase().includes(q) ||
           p.subcategoria?.toLowerCase().includes(q) ||
-          p.origem?.toLowerCase().includes(q)
+          p.origem?.toLowerCase().includes(q),
       );
     }
     return lista;
@@ -30,7 +30,7 @@ export default function CardapioPage() {
 
   const subcategorias = useMemo(
     () => getSubcategorias(categoriaAtiva),
-    [categoriaAtiva]
+    [categoriaAtiva],
   );
 
   const porSubcategoria = useMemo(() => {
@@ -46,25 +46,6 @@ export default function CardapioPage() {
   return (
     <div className="min-h-screen bg-[#0f0a14] text-white">
       <header className="sticky top-0 z-10 flex items-center justify-between border-b border-white/10 bg-[#0f0a14]/95 px-4 py-3 backdrop-blur">
-        <Link
-          href="/"
-          className="flex items-center gap-2 text-white/80 hover:text-white"
-          aria-label="Voltar"
-        >
-          <svg
-            className="h-5 w-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-        </Link>
         <p className="text-sm text-white/80">
           Encontramos {produtos.length} bebidas
         </p>
@@ -133,8 +114,18 @@ export default function CardapioPage() {
           href="/cardapio"
           className="flex flex-col items-center gap-1 text-white/80 hover:text-white"
         >
-          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          <svg
+            className="h-5 w-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 6h16M4 12h16M4 18h16"
+            />
           </svg>
           <span className="text-xs">Cardápio</span>
         </Link>
@@ -143,8 +134,18 @@ export default function CardapioPage() {
           className="flex h-12 w-12 items-center justify-center rounded-full bg-[#7c3aed] text-white shadow-lg transition hover:bg-[#6d28d9]"
           aria-label="Carrinho"
         >
-          <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          <svg
+            className="h-6 w-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+            />
           </svg>
         </Link>
       </nav>

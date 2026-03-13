@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { salvarNumeroPedidoNoCookie, lerNumeroPedidoDoCookie } from "@/app/lib/pedido";
@@ -8,7 +8,7 @@ import { salvarNumeroPedidoNoCookie, lerNumeroPedidoDoCookie } from "@/app/lib/p
 const TEMPO_MEDIO_MIN = 30;
 const TEMPO_MEDIO_MAX = 45;
 
-export default function SucessoPage() {
+function SucessoContent() {
   const searchParams = useSearchParams();
   const [numeroPedido, setNumeroPedido] = useState<string | null>(null);
 
@@ -76,5 +76,21 @@ export default function SucessoPage() {
         </Link>
       </main>
     </div>
+  );
+}
+
+function SucessoFallback() {
+  return (
+    <div className="min-h-screen bg-[#0f0a14] text-white flex flex-col items-center justify-center">
+      <div className="animate-pulse text-white/60">Carregando...</div>
+    </div>
+  );
+}
+
+export default function SucessoPage() {
+  return (
+    <Suspense fallback={<SucessoFallback />}>
+      <SucessoContent />
+    </Suspense>
   );
 }
