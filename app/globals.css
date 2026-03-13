@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+:root {
+  --background: #1F1D2B;
+  --foreground: #ffffff;
+  --card: #ffffff;
+  --primary: #FFB74D;
+  --primary-foreground: #1F1D2B;
+  --muted: #9CA3AF;
+  --border: #E5E7EB;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  
+  --radius-xl: 40px;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Placeholder para imagens de produto quando não houver arquivo */
+.img-placeholder {
+  background: linear-gradient(135deg, #2d1f3d 0%, #1a1225 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 2rem;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
