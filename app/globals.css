@@ -47,3 +47,11 @@ body {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+@keyframes bounce-hint {
+  0%, 100% { transform: translateX(0); opacity: 1; }
+  50% { transform: translateX(4px); opacity: 0.7; }
+}
+.animate-bounce-hint {
+  animation: bounce-hint 1.5s ease-in-out infinite;
+}

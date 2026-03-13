@@ -100,314 +100,377 @@ export default function CarrinhoPage() {
     router.push(`/cardapio/carrinho/sucesso?numero=${encodeURIComponent(numeroPedido)}`);
   };
 
+  const handleVoltar = () => {
+    if (step === "checkout") {
+      setStep("carrinho");
+    } else {
+      router.push("/cardapio");
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-[#0f0a14] text-white">
-      <header className="sticky top-0 z-10 flex items-center justify-between border-b border-white/10 bg-[#0f0a14]/95 px-4 py-3 backdrop-blur">
-        {step === "checkout" ? (
-          <button
-            type="button"
-            onClick={() => setStep("carrinho")}
-            className="flex items-center gap-2 text-white/80 hover:text-white"
-            aria-label="Voltar ao carrinho"
+    <div className="flex min-h-screen flex-col bg-[#1e1b26] font-sans overflow-hidden">
+      {/* Header */}
+      <header className="flex items-center justify-between px-6 pt-6 pb-2 text-white z-10 relative">
+        <button
+          onClick={handleVoltar}
+          className="p-2 -ml-2 hover:bg-white/10 rounded-full transition"
+        >
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
-            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-        ) : (
-          <Link
-            href="/cardapio"
-            className="flex items-center gap-2 text-white/80 hover:text-white"
-            aria-label="Voltar ao cardápio"
-          >
-            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </Link>
-        )}
-        <h1 className="text-lg font-semibold">{step === "carrinho" ? "Carrinho" : "Finalizar pedido"}</h1>
-        <div className="w-10" />
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <h1 className="text-lg font-medium">{step === "carrinho" ? "Carrinho" : "Finalizar Pedido"}</h1>
+        <div className="w-8"></div> {/* Spacer para centralizar */}
       </header>
 
-      <main className="px-4 py-6">
-        {itens.length === 0 && step === "carrinho" ? (
-          <div className="flex flex-col items-center justify-center rounded-2xl bg-white/5 py-16 text-center">
-            <p className="mb-4 text-white/80">Seu carrinho está vazio.</p>
-            <Link
-              href="/cardapio"
-              className="rounded-xl bg-[#7c3aed] px-6 py-2.5 font-medium text-white hover:bg-[#6d28d9]"
-            >
-              Ver cardápio
-            </Link>
-          </div>
-        ) : step === "carrinho" ? (
-          <>
-            <div className="space-y-3">
-              {itens.map((item) => (
-                <div
-                  key={item.produto.id}
-                  className="flex items-center gap-4 rounded-2xl bg-white p-4 text-gray-900"
+      {/* Cartão Branco Principal */}
+      <main className="flex-1 bg-white rounded-t-[40px] mt-4 shadow-[0_-10px_40px_rgba(0,0,0,0.2)] relative flex flex-col h-full overflow-hidden">
+        <div className="flex-1 overflow-y-auto px-6 pt-8 pb-20">
+          
+          {itens.length === 0 && step === "carrinho" ? (
+            <div className="flex flex-col items-center justify-center py-16 text-center h-full">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4 text-gray-400">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+              </div>
+              <p className="mb-6 text-gray-500 font-medium">Seu carrinho está vazio.</p>
+              <Link
+                href="/cardapio"
+                className="bg-yellow-500 text-black px-8 py-3 rounded-full font-semibold hover:bg-yellow-400 transition shadow-lg"
+              >
+                Ver cardápio
+              </Link>
+            </div>
+          ) : step === "carrinho" ? (
+            <>
+              <div className="space-y-6">
+                {itens.map((item) => (
+                  <div
+                    key={item.produto.id}
+                    className="flex items-center gap-4 border-b border-gray-100 pb-6 last:border-0"
+                  >
+                    <div className="w-20 h-20 bg-gray-50 rounded-xl flex items-center justify-center shrink-0">
+                      <ProductImage produto={item.produto} size="sm" />
+                    </div>
+                    
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-gray-900 truncate text-base">{item.produto.nome}</p>
+                      <p className="text-sm font-medium text-gray-500 mt-1">
+                        R$ {(item.produto.preco * item.quantidade).toFixed(2).replace(".", ",")}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-3 bg-gray-50 rounded-full p-1">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (item.quantidade <= 1) remover(item.produto.id);
+                          else alterarQuantidade(item.produto.id, item.quantidade - 1);
+                        }}
+                        className="w-8 h-8 flex items-center justify-center rounded-full bg-white text-gray-600 shadow-sm hover:scale-105 transition"
+                      >
+                        −
+                      </button>
+                      <span className="w-4 text-center font-semibold text-gray-900 text-sm">{item.quantidade}</span>
+                      <button
+                        type="button"
+                        onClick={() => alterarQuantidade(item.produto.id, item.quantidade + 1)}
+                        className="w-8 h-8 flex items-center justify-center rounded-full bg-yellow-400 text-black shadow-sm hover:scale-105 transition"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-8 bg-gray-50 rounded-2xl p-6">
+                <div className="flex justify-between text-base mb-2">
+                  <span className="text-gray-500">
+                    {totalItens} {totalItens === 1 ? "item" : "itens"}
+                  </span>
+                  <span className="font-bold text-gray-900">R$ {totalPreco.toFixed(2).replace(".", ",")}</span>
+                </div>
+                <p className="text-xs text-gray-400 text-center mt-2">Frete será calculado na próxima etapa</p>
+              </div>
+
+              <div className="sticky bottom-0 bg-white pt-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+                <button
+                  type="button"
+                  onClick={() => setStep("checkout")}
+                  className="w-full bg-yellow-500 text-black h-[60px] rounded-[30px] font-semibold text-lg hover:bg-yellow-400 transition shadow-xl flex items-center justify-center"
                 >
-                  <ProductImage produto={item.produto} size="sm" />
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium truncate">{item.produto.nome}</p>
-                    <p className="text-sm font-semibold text-[#7c3aed]">
-                      R$ {(item.produto.preco * item.quantidade).toFixed(2).replace(".", ",")}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (item.quantidade <= 1) remover(item.produto.id);
-                        else alterarQuantidade(item.produto.id, item.quantidade - 1);
-                      }}
-                      className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 text-gray-600 hover:bg-gray-50"
-                    >
-                      −
-                    </button>
-                    <span className="min-w-[1.5rem] text-center font-medium">{item.quantidade}</span>
-                    <button
-                      type="button"
-                      onClick={() => alterarQuantidade(item.produto.id, item.quantidade + 1)}
-                      className="flex h-8 w-8 items-center justify-center rounded-full bg-[#7c3aed] text-white hover:bg-[#6d28d9]"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-8 rounded-2xl bg-white/10 p-4">
-              <div className="flex justify-between text-lg">
-                <span className="text-white/80">
-                  {totalItens} {totalItens === 1 ? "item" : "itens"}
-                </span>
-                <span className="font-bold">R$ {totalPreco.toFixed(2).replace(".", ",")}</span>
+                  Finalizar pedido
+                </button>
               </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setStep("checkout")}
-              className="mt-6 w-full rounded-xl bg-[#7c3aed] py-3.5 font-medium text-white hover:bg-[#6d28d9]"
-            >
-              Finalizar pedido
-            </button>
-          </>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <section className="rounded-2xl bg-white/10 p-4">
-              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/70">Dados para contato</h2>
-              <div className="space-y-3">
-                <input
-                  type="text"
-                  placeholder="Nome completo"
-                  value={form.nome}
-                  onChange={(e) => updateForm("nome", e.target.value)}
-                  className="w-full rounded-xl border border-white/20 bg-white/5 px-4 py-3 text-white placeholder:text-white/50 focus:border-[#7c3aed] focus:outline-none focus:ring-1 focus:ring-[#7c3aed]"
-                  required
-                />
-                <input
-                  type="tel"
-                  placeholder="WhatsApp (com DDD)"
-                  value={form.whatsapp}
-                  onChange={(e) => updateForm("whatsapp", e.target.value)}
-                  className="w-full rounded-xl border border-white/20 bg-white/5 px-4 py-3 text-white placeholder:text-white/50 focus:border-[#7c3aed] focus:outline-none focus:ring-1 focus:ring-[#7c3aed]"
-                  required
-                />
-              </div>
-            </section>
-
-            <section className="rounded-2xl bg-white/10 p-4">
-              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/70">Endereço</h2>
-              <div className="space-y-3">
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="CEP"
-                    value={form.cep}
-                    onChange={(e) => updateForm("cep", e.target.value)}
-                    onBlur={handleCepBlur}
-                    className="flex-1 rounded-xl border border-white/20 bg-white/5 px-4 py-3 text-white placeholder:text-white/50 focus:border-[#7c3aed] focus:outline-none focus:ring-1 focus:ring-[#7c3aed]"
-                    required
-                  />
-                  {cepLoading && (
-                    <span className="flex items-center text-sm text-white/60">Buscando...</span>
-                  )}
-                </div>
-                {cepError && <p className="text-sm text-red-400">{cepError}</p>}
-                <input
-                  type="text"
-                  placeholder="Rua"
-                  value={form.rua}
-                  onChange={(e) => updateForm("rua", e.target.value)}
-                  className="w-full rounded-xl border border-white/20 bg-white/5 px-4 py-3 text-white placeholder:text-white/50 focus:border-[#7c3aed] focus:outline-none focus:ring-1 focus:ring-[#7c3aed]"
-                  required
-                />
-                <div className="grid grid-cols-2 gap-2">
-                  <input
-                    type="text"
-                    placeholder="Número"
-                    value={form.numero}
-                    onChange={(e) => updateForm("numero", e.target.value)}
-                    className="rounded-xl border border-white/20 bg-white/5 px-4 py-3 text-white placeholder:text-white/50 focus:border-[#7c3aed] focus:outline-none focus:ring-1 focus:ring-[#7c3aed]"
-                    required
-                  />
-                  <input
-                    type="text"
-                    placeholder="Complemento (opcional)"
-                    value={form.complemento ?? ""}
-                    onChange={(e) => updateForm("complemento", e.target.value)}
-                    className="rounded-xl border border-white/20 bg-white/5 px-4 py-3 text-white placeholder:text-white/50 focus:border-[#7c3aed] focus:outline-none focus:ring-1 focus:ring-[#7c3aed]"
-                  />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Bairro"
-                  value={form.bairro}
-                  onChange={(e) => updateForm("bairro", e.target.value)}
-                  className="w-full rounded-xl border border-white/20 bg-white/5 px-4 py-3 text-white placeholder:text-white/50 focus:border-[#7c3aed] focus:outline-none focus:ring-1 focus:ring-[#7c3aed]"
-                  required
-                />
-                <div className="grid grid-cols-3 gap-2">
-                  <input
-                    type="text"
-                    placeholder="Cidade"
-                    value={form.cidade}
-                    onChange={(e) => updateForm("cidade", e.target.value)}
-                    className="col-span-2 rounded-xl border border-white/20 bg-white/5 px-4 py-3 text-white placeholder:text-white/50 focus:border-[#7c3aed] focus:outline-none focus:ring-1 focus:ring-[#7c3aed]"
-                    required
-                  />
-                  <input
-                    type="text"
-                    placeholder="UF"
-                    value={form.uf}
-                    onChange={(e) => updateForm("uf", e.target.value.toUpperCase().slice(0, 2))}
-                    className="rounded-xl border border-white/20 bg-white/5 px-4 py-3 text-white placeholder:text-white/50 focus:border-[#7c3aed] focus:outline-none focus:ring-1 focus:ring-[#7c3aed]"
-                    required
-                  />
-                </div>
-              </div>
-            </section>
-
-            <section className="rounded-2xl bg-white/10 p-4">
-              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/70">Entrega</h2>
-              <div className="flex gap-3">
-                <label className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-white/20 bg-white/5 py-3 has-[:checked]:border-[#7c3aed] has-[:checked]:bg-[#7c3aed]/20">
-                  <input
-                    type="radio"
-                    name="tipoEntrega"
-                    checked={form.tipoEntrega === "entrega"}
-                    onChange={() => updateForm("tipoEntrega", "entrega")}
-                    className="sr-only"
-                  />
-                  <span>Entrega</span>
-                  <span className="text-sm text-white/80">R$ {VALOR_FRETE.toFixed(2).replace(".", ",")}</span>
-                </label>
-                <label className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-white/20 bg-white/5 py-3 has-[:checked]:border-[#7c3aed] has-[:checked]:bg-[#7c3aed]/20">
-                  <input
-                    type="radio"
-                    name="tipoEntrega"
-                    checked={form.tipoEntrega === "retirada"}
-                    onChange={() => updateForm("tipoEntrega", "retirada")}
-                    className="sr-only"
-                  />
-                  <span>Retirada</span>
-                  <span className="text-sm text-white/80">R$ 0,00</span>
-                </label>
-              </div>
-              <p className="mt-2 text-center text-sm text-white/60">
-                {form.tipoEntrega === "entrega"
-                  ? `Frete: R$ ${VALOR_FRETE.toFixed(2).replace(".", ",")}`
-                  : "Retirada no local — sem custo"}
-              </p>
-            </section>
-
-            <section className="rounded-2xl bg-white/10 p-4">
-              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/70">Forma de pagamento</h2>
-              <div className="space-y-2">
-                <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-white/20 bg-white/5 px-4 py-3 has-[:checked]:border-[#7c3aed] has-[:checked]:bg-[#7c3aed]/20">
-                  <input
-                    type="radio"
-                    name="pagamento"
-                    checked={form.formaPagamento === "pix"}
-                    onChange={() => updateForm("formaPagamento", "pix")}
-                    className="h-4 w-4 accent-[#7c3aed]"
-                  />
-                  <span>PIX</span>
-                </label>
-                <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-white/20 bg-white/5 px-4 py-3 has-[:checked]:border-[#7c3aed] has-[:checked]:bg-[#7c3aed]/20">
-                  <input
-                    type="radio"
-                    name="pagamento"
-                    checked={form.formaPagamento === "dinheiro"}
-                    onChange={() => updateForm("formaPagamento", "dinheiro")}
-                    className="h-4 w-4 accent-[#7c3aed]"
-                  />
-                  <span>Na entrega — Dinheiro</span>
-                </label>
-                {form.formaPagamento === "dinheiro" && (
-                  <div className="ml-7">
+            </>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-8">
+              <section>
+                <h2 className="text-lg font-bold text-gray-900 mb-4">Dados para contato</h2>
+                <div className="space-y-4">
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-700 ml-1">Nome completo</label>
                     <input
                       type="text"
-                      placeholder="Troco para (ex: 50,00)"
-                      value={form.trocoPara ?? ""}
-                      onChange={(e) => updateForm("trocoPara", e.target.value)}
-                      className="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/50 focus:border-[#7c3aed] focus:outline-none"
+                      placeholder="Ex: João Silva"
+                      value={form.nome}
+                      onChange={(e) => updateForm("nome", e.target.value)}
+                      className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 transition"
+                      required
                     />
                   </div>
-                )}
-                <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-white/20 bg-white/5 px-4 py-3 has-[:checked]:border-[#7c3aed] has-[:checked]:bg-[#7c3aed]/20">
-                  <input
-                    type="radio"
-                    name="pagamento"
-                    checked={form.formaPagamento === "credito"}
-                    onChange={() => updateForm("formaPagamento", "credito")}
-                    className="h-4 w-4 accent-[#7c3aed]"
-                  />
-                  <span>Na entrega — Crédito</span>
-                </label>
-                <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-white/20 bg-white/5 px-4 py-3 has-[:checked]:border-[#7c3aed] has-[:checked]:bg-[#7c3aed]/20">
-                  <input
-                    type="radio"
-                    name="pagamento"
-                    checked={form.formaPagamento === "debito"}
-                    onChange={() => updateForm("formaPagamento", "debito")}
-                    className="h-4 w-4 accent-[#7c3aed]"
-                  />
-                  <span>Na entrega — Débito</span>
-                </label>
-              </div>
-            </section>
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-700 ml-1">WhatsApp</label>
+                    <input
+                      type="tel"
+                      placeholder="(00) 00000-0000"
+                      value={form.whatsapp}
+                      onChange={(e) => updateForm("whatsapp", e.target.value)}
+                      className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 transition"
+                      required
+                    />
+                  </div>
+                </div>
+              </section>
 
-            <div className="rounded-2xl bg-white/10 p-4">
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between text-white/80">
-                  <span>Subtotal ({totalItens} itens)</span>
+              <section>
+                <h2 className="text-lg font-bold text-gray-900 mb-4">Endereço</h2>
+                <div className="space-y-4">
+                  <div className="flex gap-3">
+                    <div className="flex-1 space-y-1">
+                      <label className="text-sm font-medium text-gray-700 ml-1">CEP</label>
+                      <input
+                        type="text"
+                        placeholder="00000-000"
+                        value={form.cep}
+                        onChange={(e) => updateForm("cep", e.target.value)}
+                        onBlur={handleCepBlur}
+                        className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 transition"
+                        required
+                      />
+                    </div>
+                    {cepLoading && (
+                      <div className="flex items-center pt-6">
+                        <div className="w-5 h-5 border-2 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
+                      </div>
+                    )}
+                  </div>
+                  {cepError && <p className="text-sm text-red-500 font-medium ml-1">{cepError}</p>}
+                  
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-700 ml-1">Rua</label>
+                    <input
+                      type="text"
+                      placeholder="Nome da rua"
+                      value={form.rua}
+                      onChange={(e) => updateForm("rua", e.target.value)}
+                      className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 transition"
+                      required
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <label className="text-sm font-medium text-gray-700 ml-1">Número</label>
+                      <input
+                        type="text"
+                        placeholder="123"
+                        value={form.numero}
+                        onChange={(e) => updateForm("numero", e.target.value)}
+                        className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 transition"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-sm font-medium text-gray-700 ml-1">Comp.</label>
+                      <input
+                        type="text"
+                        placeholder="Apto 101"
+                        value={form.complemento ?? ""}
+                        onChange={(e) => updateForm("complemento", e.target.value)}
+                        className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 transition"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-700 ml-1">Bairro</label>
+                    <input
+                      type="text"
+                      placeholder="Nome do bairro"
+                      value={form.bairro}
+                      onChange={(e) => updateForm("bairro", e.target.value)}
+                      className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 transition"
+                      required
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="col-span-2 space-y-1">
+                      <label className="text-sm font-medium text-gray-700 ml-1">Cidade</label>
+                      <input
+                        type="text"
+                        placeholder="Cidade"
+                        value={form.cidade}
+                        onChange={(e) => updateForm("cidade", e.target.value)}
+                        className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 transition"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-sm font-medium text-gray-700 ml-1">UF</label>
+                      <input
+                        type="text"
+                        placeholder="UF"
+                        value={form.uf}
+                        onChange={(e) => updateForm("uf", e.target.value.toUpperCase().slice(0, 2))}
+                        className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 transition"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section>
+                <h2 className="text-lg font-bold text-gray-900 mb-4">Entrega</h2>
+                <div className="flex gap-3">
+                  <label className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-gray-200 bg-gray-50 py-3 has-[:checked]:border-yellow-500 has-[:checked]:bg-yellow-50 transition">
+                    <input
+                      type="radio"
+                      name="tipoEntrega"
+                      checked={form.tipoEntrega === "entrega"}
+                      onChange={() => updateForm("tipoEntrega", "entrega")}
+                      className="sr-only"
+                    />
+                    <span className="font-medium text-gray-900">Entrega</span>
+                    <span className="text-sm text-gray-500">R$ {VALOR_FRETE.toFixed(2).replace(".", ",")}</span>
+                  </label>
+                  <label className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-gray-200 bg-gray-50 py-3 has-[:checked]:border-yellow-500 has-[:checked]:bg-yellow-50 transition">
+                    <input
+                      type="radio"
+                      name="tipoEntrega"
+                      checked={form.tipoEntrega === "retirada"}
+                      onChange={() => updateForm("tipoEntrega", "retirada")}
+                      className="sr-only"
+                    />
+                    <span className="font-medium text-gray-900">Retirada</span>
+                    <span className="text-sm text-gray-500">Grátis</span>
+                  </label>
+                </div>
+              </section>
+
+              <section>
+                <h2 className="text-lg font-bold text-gray-900 mb-4">Pagamento</h2>
+                <div className="space-y-3">
+                  <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-4 has-[:checked]:border-yellow-500 has-[:checked]:bg-yellow-50 transition">
+                    <input
+                      type="radio"
+                      name="pagamento"
+                      checked={form.formaPagamento === "pix"}
+                      onChange={() => updateForm("formaPagamento", "pix")}
+                      className="h-5 w-5 accent-yellow-500"
+                    />
+                    <span className="text-gray-900 font-medium">PIX</span>
+                  </label>
+                  
+                  <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-4 has-[:checked]:border-yellow-500 has-[:checked]:bg-yellow-50 transition">
+                    <input
+                      type="radio"
+                      name="pagamento"
+                      checked={form.formaPagamento === "dinheiro"}
+                      onChange={() => updateForm("formaPagamento", "dinheiro")}
+                      className="h-5 w-5 accent-yellow-500"
+                    />
+                    <div className="flex flex-col">
+                      <span className="text-gray-900 font-medium">Dinheiro</span>
+                      <span className="text-xs text-gray-500">Pagamento na entrega</span>
+                    </div>
+                  </label>
+                  
+                  {form.formaPagamento === "dinheiro" && (
+                    <div className="ml-8 animate-fadeIn">
+                      <input
+                        type="text"
+                        placeholder="Precisa de troco para quanto?"
+                        value={form.trocoPara ?? ""}
+                        onChange={(e) => updateForm("trocoPara", e.target.value)}
+                        className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-yellow-500 focus:outline-none"
+                      />
+                    </div>
+                  )}
+
+                  <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-4 has-[:checked]:border-yellow-500 has-[:checked]:bg-yellow-50 transition">
+                    <input
+                      type="radio"
+                      name="pagamento"
+                      checked={form.formaPagamento === "credito"}
+                      onChange={() => updateForm("formaPagamento", "credito")}
+                      className="h-5 w-5 accent-yellow-500"
+                    />
+                    <div className="flex flex-col">
+                      <span className="text-gray-900 font-medium">Cartão de Crédito</span>
+                      <span className="text-xs text-gray-500">Pagamento na entrega</span>
+                    </div>
+                  </label>
+
+                  <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-4 has-[:checked]:border-yellow-500 has-[:checked]:bg-yellow-50 transition">
+                    <input
+                      type="radio"
+                      name="pagamento"
+                      checked={form.formaPagamento === "debito"}
+                      onChange={() => updateForm("formaPagamento", "debito")}
+                      className="h-5 w-5 accent-yellow-500"
+                    />
+                    <div className="flex flex-col">
+                      <span className="text-gray-900 font-medium">Cartão de Débito</span>
+                      <span className="text-xs text-gray-500">Pagamento na entrega</span>
+                    </div>
+                  </label>
+                </div>
+              </section>
+
+              <div className="bg-gray-50 rounded-2xl p-6 space-y-3">
+                <div className="flex justify-between text-gray-600 text-sm">
+                  <span>Subtotal</span>
                   <span>R$ {totalPreco.toFixed(2).replace(".", ",")}</span>
                 </div>
-                <div className="flex justify-between text-white/80">
+                <div className="flex justify-between text-gray-600 text-sm">
                   <span>{form.tipoEntrega === "entrega" ? "Frete" : "Retirada"}</span>
-                  <span>R$ {valorFrete.toFixed(2).replace(".", ",")}</span>
+                  <span>
+                    {valorFrete === 0 ? "Grátis" : `R$ ${valorFrete.toFixed(2).replace(".", ",")}`}
+                  </span>
                 </div>
-                <div className="flex justify-between border-t border-white/20 pt-2 text-lg font-bold">
+                <div className="border-t border-gray-200 pt-3 mt-1 flex justify-between text-lg font-bold text-gray-900">
                   <span>Total</span>
                   <span>R$ {totalGeral.toFixed(2).replace(".", ",")}</span>
                 </div>
               </div>
-            </div>
 
-            <button
-              type="submit"
-              disabled={!canSubmit}
-              className="w-full rounded-xl bg-[#7c3aed] py-3.5 font-medium text-white hover:bg-[#6d28d9] disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Confirmar pedido
-            </button>
-          </form>
-        )}
+              <div className="sticky bottom-0 bg-white pt-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+                <button
+                  type="submit"
+                  disabled={!canSubmit}
+                  className="w-full bg-yellow-500 text-black h-[60px] rounded-[30px] font-semibold text-lg hover:bg-yellow-400 transition shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                >
+                  Confirmar pedido
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
       </main>
     </div>
   );
