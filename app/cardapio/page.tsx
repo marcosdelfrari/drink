@@ -14,62 +14,39 @@ export default function CardapioPage() {
   const [categoriaAtiva, setCategoriaAtiva] = useState<
     (typeof categorias)[number]["id"]
   >(categorias[1].id); // Começa com Alcool (como Cerveja na imagem)
-  const [mostraEsquerda, setMostraEsquerda] = useState(false);
-  const [mostraDireita, setMostraDireita] = useState(true);
   const tabsRef = useRef<HTMLDivElement>(null);
 
   const produtosAtuais = getProdutosPorCategoria(categoriaAtiva);
   const subcategoriasAtuais = getSubcategorias(categoriaAtiva);
   const { adicionar, totalItens } = useCart();
 
-  const atualizarSombras = () => {
-    const el = tabsRef.current;
-    if (!el) return;
-    const { scrollLeft, scrollWidth, clientWidth } = el;
-    setMostraEsquerda(scrollLeft > 8);
-    setMostraDireita(scrollLeft < scrollWidth - clientWidth - 8);
-  };
-
   useEffect(() => {
-    const el = tabsRef.current;
-    if (!el) return;
-    atualizarSombras();
-    el.addEventListener("scroll", atualizarSombras);
-    const ro = new ResizeObserver(atualizarSombras);
-    ro.observe(el);
-    return () => {
-      el.removeEventListener("scroll", atualizarSombras);
-      ro.disconnect();
-    };
-  }, []);
+    // Scrolla a categoria ativa para o centro quando ela mudar
+    if (tabsRef.current) {
+      const activeTab = tabsRef.current.querySelector('[data-active="true"]');
+      if (activeTab) {
+        activeTab.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          inline: "center",
+        });
+      }
+    }
+  }, [categoriaAtiva]);
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground font-sans">
       {/* Header Fixo */}
-      <header className="sticky top-0 z-10 flex flex-col bg-background px-4 pt-6 pb-4">
+      <header className="sticky top-0 z-10 flex flex-col bg-background px-4 pt-6 pb-2">
         <div className="flex items-center justify-between mb-4">
           <span className="text-2xl font-bold opacity-90">DrinkBar </span>
         </div>
 
-        {/* Tabs de Categoria - com hint de scroll */}
-        <div className="relative -mx-4 px-4">
-          {/* Gradientes laterais para indicar mais conteúdo */}
-          {mostraDireita && (
-            <div
-              className="pointer-events-none absolute right-0 top-0 z-10 h-full w-12 bg-gradient-to-l from-background to-transparent"
-              aria-hidden
-            />
-          )}
-          {mostraEsquerda && (
-            <div
-              className="pointer-events-none absolute left-0 top-0 z-10 h-full w-12 bg-gradient-to-r from-background to-transparent"
-              aria-hidden
-            />
-          )}
-
+        {/* Tabs de Categoria - Estilo Pills/Cápsulas */}
+        <div className="relative -mx-4">
           <div
             ref={tabsRef}
-            className="flex items-center gap-6 overflow-x-auto scrollbar-hide pb-2 scroll-smooth snap-x snap-mandatory"
+            className="flex items-center gap-3 overflow-x-auto scrollbar-hide px-4 pb-4 scroll-smooth snap-x snap-mandatory"
             style={{ WebkitOverflowScrolling: "touch" }}
           >
             {categorias.map((cat) => {
@@ -77,31 +54,21 @@ export default function CardapioPage() {
               return (
                 <button
                   key={cat.id}
+                  data-active={isActive}
                   onClick={() => setCategoriaAtiva(cat.id)}
-                  className={`flex shrink-0 flex-col items-center gap-1 snap-center transition-all py-1 ${
+                  className={`flex shrink-0 items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold transition-all snap-center ${
                     isActive
-                      ? "text-white font-semibold"
-                      : "text-gray-400 font-medium"
+                      ? "bg-white text-black shadow-md scale-105"
+                      : "bg-white/10 text-gray-300 hover:bg-white/20 border border-white/5"
                   }`}
                 >
-                  <span className="whitespace-nowrap text-base">
-                    {cat.label.split(" ")[0]}
+                  <span className="whitespace-nowrap">
+                    {cat.label}
                   </span>
-                  {isActive && (
-                    <div className="h-1 w-1 rounded-full bg-white mt-1"></div>
-                  )}
                 </button>
               );
             })}
           </div>
-
-          {/* Hint "deslize" só no mobile, some ao scrollar */}
-          {mostraDireita && (
-            <p className="text-center text-xs text-gray-500 mt-1.5 flex items-center justify-center gap-1">
-              Deslize para ver mais
-              <span className="inline-block animate-bounce-hint">→</span>
-            </p>
-          )}
         </div>
       </header>
 
